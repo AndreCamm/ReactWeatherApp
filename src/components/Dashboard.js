@@ -8,7 +8,7 @@ const Dashboard = () => {
     const getWeather = () => {
         axios
             .get(
-                "http://api.openweathermap.org/data/2.5/weather?q=Manchester,GB&units=metric&appid=553f805ecc93dc6f02c441549afd55c3"
+                "http://api.openweathermap.org/data/2.5/weather?q=Manchester,GB&units=metric&appid=secret"
             )
             .then((response) => {
                 console.log(response.data.main)
