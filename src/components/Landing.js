@@ -1,87 +1,98 @@
-import React from "react"
+import React, { useEffect } from "react"
 import "./Landing.css"
 import axios from "axios"
-import { FaCloudShowersHeavy } from "react-icons/fa"
-import { FiSun } from "react-icons/fi"
+import { WeatherBoard } from "./WeatherBoard"
 // import { FaCloudShowersHeavy } from "react-icons/fa"
 // import { FaCloudShowersHeavy } from "react-icons/fa"
 // import { FaCloudShowersHeavy } from "react-icons/fa"
 // import { FaCloudShowersHeavy } from "react-icons/fa"
 
-const Landing = () => {
-    React.useEffect(() => {
-        getGeoInfo()
-    })
+const Landing = (props) => {
+
+    const [location, setLocation] = React.useState(null)
+    const [weatherData, setWeatherData] = React.useState(null)
+    const [error, setError] = React.useState(null)
+
     const getGeoInfo = () => {
+
+        const geoSuccess = (position) => {
+
+            console.log('As parada sao', position.coords.latitude)
+
+            getWeather({ coords: {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+            }})
+        }
+
+        const geoError = () => {
+            setError('problema com geoerror')
+        }
+
+        console.log(navigator.geolocation.getCurrentPosition(geoSuccess, geoError))
+
+    }
+
+    useEffect(() => {
+        getGeoInfo()
+    }, [])
+
+    const getWeather = ({location, coords}) => {
+        setError(null)
+
+        let params = ''
+
+        if(location) {
+            params = `q=${location}`
+        } else if (coords) {
+            params = `lat=${coords.latitude}&lon=${coords.longitude}`
+        }
+
         axios
-            .get("https://ipapi.co/json/")
+            .get(
+                `http://api.openweathermap.org/data/2.5/weather?${params}&units=metric&appid=553f805ecc93dc6f02c441549afd55c3`
+            )
             .then((response) => {
-                let data = response.data
-                console.log(data)
-                this.setState({
-                    countryName: data.country_name,
-                    countryCode: data.country_calling_code,
-                })
+                //api call pras foto aqui
+                document.body.style.backgroundImage = 'url(https://media-cdn.tripadvisor.com/media/photo-s/06/18/ac/d0/alegrete.jpg)'
+                console.log('OIE', response.data.name)
+                setWeatherData(response.data)
             })
 
             .catch((error) => {
-                console.log(error)
+                if(error.response.data.cod === '404') {
+                    setError('This city is mais longe que o Alegrete')
+                } else {
+                    console.error('Fatal error', error)
+                }
             })
+    }
+
+    const doSubmit = (e) => {
+        e.preventDefault()
+        console.log(location)
+        getWeather({location})
     }
 
     return (
         <div className="landing-wrap">
             <div className="form-wrap">
-                <form id="main-search">
+                {error && <span>{error}</span>}
+                <form id="main-search" onSubmit={(e) => doSubmit(e)}>
                     <label>
                         <input
                             type="text"
                             name="name"
                             id="city"
                             placeholder="Enter city here"
+                            onChange={(e) => setLocation(e.target.value)}
                         />
                     </label>
                     <input type="submit" value="Submit" id="submit-btn" />
                 </form>
             </div>
-            <div className="inner-wrap">
-                <h3>Manchester</h3>
-                <FaCloudShowersHeavy size="100px" color="lightskyblue" />
-                <h1>20°C</h1>
-                <div id="min-max">
-                    <h3>10°C</h3>
-                    <h3>25°C</h3>
-                </div>
-                <p>Its cloudy again.</p>
-                <hr />
-                <div id="forecast">
-                    <div>
-                        <p>Mon</p>
-                        <FaCloudShowersHeavy size="35px" color="lightskyblue" />
-                        <p>22/07</p>
-                    </div>
-                    <div>
-                        <p>Mon</p>
-                        <FiSun size="35px" color="lightskyblue" />
-                        <p>22/07</p>
-                    </div>
-                    <div>
-                        <p>Mon</p>
-                        <FaCloudShowersHeavy size="35px" color="lightskyblue" />
-                        <p>22/07</p>
-                    </div>
-                    <div>
-                        <p>Mon</p>
-                        <FiSun size="35px" color="lightskyblue" />
-                        <p>22/07</p>
-                    </div>
-                    <div>
-                        <p>Mon</p>
-                        <FaCloudShowersHeavy size="35px" color="lightskyblue" />
-                        <p>22/07</p>
-                    </div>
-                </div>
-            </div>
+            
+            {weatherData && <WeatherBoard data={weatherData} />}
         </div>
     )
 }

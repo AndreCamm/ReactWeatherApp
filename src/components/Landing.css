@@ -21,7 +21,7 @@
     justify-content: space-evenly;
 }
 hr {
-    border: 1px solid lightskyblue;
+    border: 1px solid rgb(255, 255, 255);
     width: 500px;
 }
 #forecast {
@@ -29,9 +29,14 @@ hr {
     width: 800px;
     justify-content: space-evenly;
 }
-.form-wrap {
+
+body {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-        url("https://images.pexels.com/photos/460672/pexels-photo-460672.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
+        url("https://images.pexels.com/photos/460672/pexels-photo-460672.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1080&w=1920");
+    background-size: 100%;
+}
+
+.form-wrap {
     background-repeat: no-repeat;
     background-position: center;
     display: flex;
@@ -44,13 +49,16 @@ hr {
 #city {
     border-radius: 5px;
     border: hidden;
-    width: 65%;
-    height: 25px;
+    width: 100%;
+    padding: 15px;
+    color: black;
+    font-size: 5em;
 }
 #submit-btn {
     background-color: royalblue;
-    width: 75px;
-    height: 25px;
+    margin-top: 15px;
     border: hidden;
     border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 3em;
 }
